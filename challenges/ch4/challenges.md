@@ -1,4 +1,4 @@
-Chapter 2 Challenges
+Chapter 4 Challenges
 ====================
 
 # 1. The lexical grammars of Python and Haskell are not regular. What does that mean, and why aren’t they?
