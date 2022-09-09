@@ -75,7 +75,6 @@ public class AstPrinter implements Visitor<String> {
         ),
         new Token(TokenType.PLUS, "+", null, 1),
         new Unary(new Token(TokenType.MINUS, "-", null, 1), new Literal(10))
-//        new Literal(10)
     );
     System.out.println(new AstPrinter().print(expression));
   }
