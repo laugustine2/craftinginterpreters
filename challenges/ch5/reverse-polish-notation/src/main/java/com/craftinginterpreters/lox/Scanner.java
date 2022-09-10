@@ -74,6 +74,7 @@ public class Scanner {
         break;
       case '-':
         addToken(TokenType.MINUS);
+	break;
       case '+':
         addToken(TokenType.PLUS);
         break;
