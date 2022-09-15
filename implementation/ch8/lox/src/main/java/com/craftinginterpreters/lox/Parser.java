@@ -1,8 +1,5 @@
 package com.craftinginterpreters.lox;
 
-import com.craftinginterpreters.lox.Expr.Assign;
-import com.craftinginterpreters.lox.Expr.Literal;
-import com.craftinginterpreters.lox.Expr.Variable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,8 +72,8 @@ public class Parser {
       Token equals = previous();
       Expr value = assignment();
       if (expr instanceof Expr.Variable) {
-        Token name = ((Variable) expr).name;
-        return new Assign(name, value);
+        Token name = ((Expr.Variable) expr).name;
+        return new Expr.Assign(name, value);
       }
       //noinspection ThrowableNotThrown
       error(equals, "Invalid assignment target.");
@@ -136,16 +133,16 @@ public class Parser {
 
   private Expr primary() {
     if (match(TokenType.FALSE)) {
-      return new Literal(false);
+      return new Expr.Literal(false);
     }
     if (match(TokenType.TRUE)) {
-      return new Literal(true);
+      return new Expr.Literal(true);
     }
     if (match(TokenType.NIL)) {
-      return new Literal(null);
+      return new Expr.Literal(null);
     }
     if (match(TokenType.NUMBER, TokenType.STRING)) {
-      return new Literal(previous().literal);
+      return new Expr.Literal(previous().literal);
     }
     if (match(TokenType.IDENTIFIER)) {
       return new Expr.Variable(previous());
