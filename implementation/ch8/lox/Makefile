@@ -6,9 +6,12 @@ generate-ast:
 # Compile
 build: src/main/java/com/craftinginterpreters/lox/Expr.java
 	mvn compile
-# Print AST
+# Run interpreter
 run: target
 	mvn exec:java -Dexec.mainClass=com.craftinginterpreters.lox.Lox
+# Tests
+test-block: target
+	mvn exec:java -Dexec.mainClass=com.craftinginterpreters.lox.Lox -Dexec.args="src/main/resources/block.lox"
 # Cleanup
 clean:
 	mvn clean
@@ -16,4 +19,4 @@ clean:
 clean-generated: src/main/java/com/craftinginterpreters/lox/Expr.java
 	rm src/main/java/com/craftinginterpreters/lox/Expr.java
 # Non-file targets
-.PHONY: generate-ast build test-ast clean clean-generated
+.PHONY: generate-ast build test-block clean clean-generated
