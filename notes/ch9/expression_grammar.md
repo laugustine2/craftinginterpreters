@@ -13,7 +13,7 @@ statement      → exprStmt
                | whileStmt
                | block ;
 exprStmt       → expression ";" ;
-forStmt        → "for" "(" ( varDecl )? ";" ( expression )? ";" ( assignment )? ")" statement ;
+forStmt        → "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement ;
 ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
 printStmt      → "print" expression ";" ;
 whileStmt      → "while" "(" expression ")" statement ;
