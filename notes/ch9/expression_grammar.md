@@ -7,12 +7,16 @@ declaration    → varDecl
                | statement ;
 varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
 statement      → exprStmt
+               | forStmt
                | ifStmt
                | printStmt
+               | whileStmt
                | block ;
 exprStmt       → expression ";" ;
+forStmt        → "for" "(" ( varDecl )? ";" ( expression )? ";" ( assignment )? ")" statement ;
 ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
 printStmt      → "print" expression ";" ;
+whileStmt      → "while" "(" expression ")" statement ;
 block          → "{" declaration* "}" ;
 expression     → assignment ;
 assignment     → IDENTIFIER "=" assignment ;
