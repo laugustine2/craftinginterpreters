@@ -12,6 +12,8 @@ run: target
 # Tests
 test-fib: target
 	mvn exec:java -Dexec.mainClass=com.craftinginterpreters.lox.Lox -Dexec.args="src/main/resources/fib.lox"
+test-counter: target
+	mvn exec:java -Dexec.mainClass=com.craftinginterpreters.lox.Lox -Dexec.args="src/main/resources/counter.lox"
 # Cleanup
 clean:
 	mvn clean
@@ -19,4 +21,4 @@ clean:
 clean-generated: src/main/java/com/craftinginterpreters/lox/Expr.java
 	rm src/main/java/com/craftinginterpreters/lox/Expr.java
 # Non-file targets
-.PHONY: generate-ast build test-block clean clean-generated
+.PHONY: generate-ast build test-fib test-counter clean clean-generated
