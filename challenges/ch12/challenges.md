@@ -10,3 +10,5 @@ Chapter 12 Challenges
 * [Implementation](./getter-methods)
 
 # 3. What are the trade-offs between approaches to accessing an object’s fields from outside of its own methods and why might a language prefer one or the other?
+
+Disallowing access to an object's fields reduces access to the internal state of the object to that of it's API (public methods). On the other hand, allowing access to the internal state is simpler with less boiler plate.
