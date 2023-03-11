@@ -10,6 +10,8 @@ build: src/main/java/com/craftinginterpreters/lox/Expr.java
 run: target
 	mvn exec:java -Dexec.mainClass=com.craftinginterpreters.lox.Lox
 # Tests
+test-superclass:
+	mvn exec:java -Dexec.mainClass=com.craftinginterpreters.lox.Lox -Dexec.args="src/main/resources/superclass.lox"
 # Cleanup
 clean:
 	mvn clean
