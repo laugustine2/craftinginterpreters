@@ -12,6 +12,8 @@ run: target
 # Tests
 test-superclass:
 	mvn exec:java -Dexec.mainClass=com.craftinginterpreters.lox.Lox -Dexec.args="src/main/resources/superclass.lox"
+test-superclass-method:
+	mvn exec:java -Dexec.mainClass=com.craftinginterpreters.lox.Lox -Dexec.args="src/main/resources/superclass-method.lox"
 # Cleanup
 clean:
 	mvn clean
