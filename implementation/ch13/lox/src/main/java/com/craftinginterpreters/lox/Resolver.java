@@ -55,6 +55,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
       Lox.error(stmt.superclass.name, "A class can't inherit from itself.");
     }
     if (stmt.superclass != null) {
+      currentClass = ClassType.SUBCLASS;
       resolve(stmt.superclass);
     }
     if (stmt.superclass != null) {
