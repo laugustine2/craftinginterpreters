@@ -1,0 +1,8 @@
+var map = [:];
+print map;
+
+map.a = 1;
+map.b = 2;
+map.c = 3;
+print map;
+print map.a;
