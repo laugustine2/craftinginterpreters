@@ -1,7 +1,5 @@
 package com.craftinginterpreters.lox;
 
-import com.craftinginterpreters.lox.Expr.This;
-import com.craftinginterpreters.lox.Stmt.Function;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,6 +152,15 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   }
 
   @Override
+  public Void visitDictExpr(Expr.Dict expr) {
+    expr.entries.forEach(e -> {
+      resolve(e.getKey());
+      resolve(e.getValue());
+    });
+    return null;
+  }
+
+  @Override
   public Void visitAssignExpr(Expr.Assign expr) {
     resolve(expr.value);
     resolveLocal(expr, expr.name);
@@ -199,7 +206,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Void visitThisExpr(This expr) {
+  public Void visitThisExpr(Expr.This expr) {
     if (currentClass == ClassType.NONE) {
       Lox.error(expr.keyword, "Can't use 'this' outside of a class.");
       return null;
@@ -236,7 +243,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     stmt.accept(this);
   }
 
-  private void resolveFunction(Function function, FunctionType type) {
+  private void resolveFunction(Stmt.Function function, FunctionType type) {
     FunctionType enclosingFunction = currentFunction;
     currentFunction = type;
     beginScope();

@@ -2,6 +2,7 @@ package com.craftinginterpreters.lox;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Parser {
 
@@ -345,6 +346,22 @@ public class Parser {
       Expr expr = expression();
       consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
       return new Expr.Grouping(expr);
+    }
+    if (match(TokenType.LEFT_BRACKET)) {
+      var entries = new ArrayList<Map.Entry<Expr, Expr>>();
+      var bracket = previous();
+      if (match(TokenType.COLON)) {
+        // empty map
+      } else {
+        do {
+          var keyExpression = expression();
+          consume(TokenType.COLON, "Expect ':' after map key.");
+          var valueExpression = expression();
+          entries.add(Map.entry(keyExpression, valueExpression));
+        } while (match(TokenType.COMMA));
+      }
+      consume(TokenType.RIGHT_BRACKET, "Expect ']' after map entries.");
+      return new Expr.Dict(bracket, entries);
     }
     throw error(peek(), "Expect expression.");
   }
