@@ -21,4 +21,6 @@ Baz().bar()
 
 # 2. Replace 'super' keyword and mechanism with opposite 'inner' keyword and mechanism.
 
+* [Implementation](./inner-keyword)
+
 # 3. Implement a feature that is missing from Lox.

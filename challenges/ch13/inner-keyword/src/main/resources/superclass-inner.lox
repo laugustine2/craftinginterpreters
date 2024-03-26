@@ -1,0 +1,19 @@
+class Base {
+  cook(a) {inner(a);}
+}
+
+class Doughnut < Base {
+  cook(a) {
+    print "Fry until golden brown.";
+    inner(a);
+    print "Place in a nice box.";
+  }
+}
+
+class BostonCream < Doughnut {
+  cook(a) {
+    print a;
+  }
+}
+
+BostonCream().cook("do thing");
