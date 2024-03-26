@@ -102,20 +102,22 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   @Override
   public Object visitGetExpr(Expr.Get expr) {
     Object object = evaluate(expr.object);
-    if (object instanceof LoxInstance klass) {
-      return klass.get(expr.name);
-    }
-    throw new RuntimeError(expr.name, "Only get instances have properties.");
+    return switch (object) {
+      case LoxInstance instance -> instance.get(expr.name);
+      case MapInstance instance -> instance.get(expr.name.lexeme);
+      default -> throw new RuntimeError(expr.name, "Only get instances have properties.");
+    };
   }
 
   @Override
   public Object visitSetExpr(Expr.Set expr) {
     Object object = evaluate(expr.object);
-    if (!(object instanceof LoxInstance)) {
-      throw new RuntimeError(expr.name, "Only instances have fields.");
-    }
     Object value = evaluate(expr.value);
-    ((LoxInstance) object).set(expr.name, value);
+    switch (object) {
+      case LoxInstance instance -> instance.set(expr.name, value);
+      case MapInstance instance -> instance.put(expr.name.lexeme, value);
+      default -> throw new RuntimeError(expr.name, "Only instances have fields.");
+    }
     return value;
   }
 
