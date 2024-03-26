@@ -24,3 +24,14 @@ Baz().bar()
 * [Implementation](./inner-keyword)
 
 # 3. Implement a feature that is missing from Lox.
+
+* [Support for maps](./maps-feature)
+
+```
+var map = [:];
+print map; // [:]
+map.a = 1;
+map.b = 2;
+map.c = 3;
+print map; // [a:1, b:2, c:3]
+```
