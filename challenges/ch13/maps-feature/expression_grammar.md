@@ -39,6 +39,9 @@ unary          → ( "!" | "-" ) unary
                | call ;
 call           → primary ( "(" arguments? ")" | "." IDENTIFIER  )*;
 arguments      → expression ( "," expression )* ;
+mapExpr        → "[" ":" "]"
+               | "[" keyValExpr ( "," keyValExpr )* "]" ;
+keyValExpr     → expression ":" expression ;
 primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING | IDENTIFIER
                | "(" expression ")"
