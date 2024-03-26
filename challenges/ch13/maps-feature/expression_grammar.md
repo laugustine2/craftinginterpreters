@@ -45,6 +45,7 @@ keyValExpr     → expression ":" expression ;
 primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING | IDENTIFIER
                | "(" expression ")"
-               | "super" "." IDENTIFIER ;
+               | "super" "." IDENTIFIER
+               | mapExpr ;
 ```
 
