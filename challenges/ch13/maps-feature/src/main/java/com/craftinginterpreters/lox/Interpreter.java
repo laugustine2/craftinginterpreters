@@ -180,6 +180,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     return lookupVariable(expr.name, expr);
   }
 
+  @Override
+  public Object visitDictExpr(Expr.Dict expr) {
+    var map = new MapInstance();
+    expr.entries.stream()
+        .map(e -> Map.entry(evaluate(e.getKey()), evaluate(e.getValue())))
+        .forEach(e -> map.put(e.getKey(), e.getValue()));
+    return map;
+  }
+
   private Object lookupVariable(Token name, Expr expr) {
     Integer distance = locals.get(expr);
     if (distance != null) {
