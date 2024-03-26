@@ -24,6 +24,7 @@ public class GenerateAst {
         "Literal  : Object value",
         "Unary    : Token operator, Expr right",
         "Variable : Token name",
+        "Dict     : Token bracket, List<Map.Entry<Expr,Expr>> entries",
         "Assign   : Token name, Expr value"
     ));
     defineAst(outputDir, "Stmt", List.of(
@@ -46,6 +47,7 @@ public class GenerateAst {
     writer.println("package com.craftinginterpreters.lox;");
     writer.println();
     writer.println("import java.util.List;");
+    writer.println("import java.util.Map;");
     writer.println();
     writer.println("abstract class " + baseName + "{");
     defineVisitor(writer, baseName, types);

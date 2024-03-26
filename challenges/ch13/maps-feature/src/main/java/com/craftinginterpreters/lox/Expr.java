@@ -1,6 +1,7 @@
 package com.craftinginterpreters.lox;
 
 import java.util.List;
+import java.util.Map;
 
 abstract class Expr{
   interface Visitor<R> {
@@ -15,6 +16,7 @@ abstract class Expr{
     R visitLiteralExpr(Literal expr);
     R visitUnaryExpr(Unary expr);
     R visitVariableExpr(Variable expr);
+    R visitDictExpr(Dict expr);
     R visitAssignExpr(Assign expr);
   }
   static class Binary extends Expr {
@@ -170,6 +172,20 @@ abstract class Expr{
     }
 
     final Token name;
+  }
+  static class Dict extends Expr {
+    Dict(Token bracket, List<Map.Entry<Expr,Expr>> entries) {
+      this.bracket = bracket;
+      this.entries = entries;
+    }
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitDictExpr(this);
+    }
+
+    final Token bracket;
+    final List<Map.Entry<Expr,Expr>> entries;
   }
   static class Assign extends Expr {
     Assign(Token name, Expr value) {
