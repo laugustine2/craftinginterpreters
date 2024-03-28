@@ -1,5 +1,6 @@
 # Java
 *.class
+a.out
 
 # Maven
 target
