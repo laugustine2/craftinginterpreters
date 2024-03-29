@@ -12,3 +12,4 @@ Chapter 14 Challenges
 
 # 3. Find a couple of open source implementations of `malloc`/`realloc`/`free` and explain how they work. Implement `reallocate()` without calling `realloc()`, `malloc()`, or `free()`. 
 
+* [Implementation](./custom-memory-allocation)
