@@ -12,4 +12,10 @@ Chapter 14 Challenges
 
 # 3. Find a couple of open source implementations of `malloc`/`realloc`/`free` and explain how they work. Implement `reallocate()` without calling `realloc()`, `malloc()`, or `free()`. 
 
+* [The C Programming Language](https://www.amazon.com/Programming-Language-2nd-Brian-Kernighan/dp/0131103628) book has an example storage allocator
+  * A version of the implementation can be found in [this repo](https://github.com/ohkimur/the-c-programming-language-2nd-edition-solutions/blob/main/chapter_8/exercise_8_06/calloc.c) which contains solutions to exercises from the book
+  * The gist is to track a "free list" of available memory sections
+  * `malloc` searches the free list for suitable block of memory, splitting if necessary
+  * `free`, on the other hand, adds a block of memory to the appropriate location in the free list, merging blocks if necessary
+  * A `Header` structure is used represent the memory blocks in free list; it contains the size of the block along with a pointer to the next block
 * [Implementation](./custom-memory-allocation)
