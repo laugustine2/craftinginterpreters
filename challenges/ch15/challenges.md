@@ -73,3 +73,5 @@ Chapter 15 Challenges
     A dynamically growing stack allows arbitrary stack depth which supports a wider range of behaviors. The downside is an added conditional check when pushing values to the stack.
 
 # 4. For `OP_NEGATE`, negate the value in place on the stack, leaving `stackTop` alone, and measure any performance difference. Are there other instructions with similar optimization?
+
+  * [Implementation](./negate-stack-in-place)
