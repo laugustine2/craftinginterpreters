@@ -3,12 +3,43 @@ Chapter 15 Challenges
 
 # 1. What bytecode instruction sequences would you generate for the following expression
 
-```c
-1 * 2 + 3
-1 + 2 * 3
-3 - 2 - 1
-1 + 2 * 3 - 4 / -5
-```
+  * `1 * 2 + 3`
+  ```py
+  0000 123 OP_CONSTANT 0 '1'
+  0002   | OP_CONSTANT 1 '2'
+  0004   | OP_MULTIPLY
+  0005   | OP_CONSTANT 1 '3'
+  0007   | OP_ADD
+  ```
+  * `1 + 2 * 3`
+  ```py
+  0000 123 OP_CONSTANT 0 '1'
+  0002   | OP_CONSTANT 1 '2'
+  0004   | OP_CONSTANT 2 '3'
+  0006   | OP_MULTIPLY
+  0007   | OP_ADD
+  ```
+  * `3 - 2 - 1`
+  ```py
+  0000 123 OP_CONSTANT 0 '3'
+  0002   | OP_CONSTANT 1 '2'
+  0004   | OP_SUBTRACT
+  0005   | OP_CONSTANT 1 '1'
+  0007   | OP_SUBTRACT
+  ```
+  * `1 + 2 * 3 - 4 / -5`
+  ```py
+  0000 123 OP_CONSTANT 0 '1'
+  0002   | OP_CONSTANT 1 '2'
+  0004   | OP_CONSTANT 2 '3'
+  0006   | OP_MULTIPLY
+  0007   | OP_ADD
+  0008   | OP_CONSTANT 1 '4'
+  0010   | OP_CONSTANT 2 '5'
+  0012   | OP_NEGATE
+  0013   | OP_DIVIDE
+  0014   | OP_SUBTRACT
+  ```
 
 # 2. First without using `OP_NEGATE` then without using `OP_SUBSTRACT`, show the bytecode instruction sequence you would generated for `4 - 3 * -2`.
 
