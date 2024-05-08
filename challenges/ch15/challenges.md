@@ -68,4 +68,6 @@ Chapter 15 Challenges
 
 # 3. Dynamically grow the VM's stack as needed instead of using a fixed sized. What are the costs and benefits of doing so?
 
+  * [Implementation](./dynamic-growth-stack)
+
 # 4. For `OP_NEGATE`, negate the value in place on the stack, leaving `stackTop` alone, and measure any performance difference. Are there other instructions with similar optimization?
