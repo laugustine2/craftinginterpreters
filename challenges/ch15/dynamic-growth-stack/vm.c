@@ -8,13 +8,21 @@
 
 VM vm;
 
-static void resetStack() { vm.stackTop = vm.stack; }
+static void resetStack() {
+  freeValueArray(&vm.stack);
+  vm.stackTop = vm.stack.values;
+}
 
 void initVM() { resetStack(); }
 
 void freeVM() {}
 
 void push(Value value) {
+  if (vm.stack.count >= vm.stack.capacity) {
+    int oldCount = vm.stack.count;
+    writeValueArray(&vm.stack, value);
+    vm.stackTop = vm.stack.values + oldCount;
+  }
   *vm.stackTop = value;
   vm.stackTop++;
 }
@@ -37,7 +45,7 @@ InterpretResult run() {
   for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
     printf(" ");
-    for (Value *slot = vm.stack; slot < vm.stackTop; slot++) {
+    for (Value *slot = vm.stack.values; slot < vm.stackTop; slot++) {
       printf("[ ");
       printValue(*slot);
       printf(" ]");
