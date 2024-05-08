@@ -41,7 +41,30 @@ Chapter 15 Challenges
   0014   | OP_SUBTRACT
   ```
 
-# 2. First without using `OP_NEGATE` then without using `OP_SUBSTRACT`, show the bytecode instruction sequence you would generated for `4 - 3 * -2`.
+# 2. First without using `OP_NEGATE` then without using `OP_SUBTRACT`, show the bytecode instruction sequence you would generated for `4 - 3 * -2`.
+
+  * without `OP_NEGATE`
+  ```py
+  0000 123 OP_CONSTANT 0 '4'
+  0002   | OP_CONSTANT 1 '3'
+  0004   | OP_CONSTANT 2 '0'
+  0006   | OP_CONSTANT 3 '2'
+  0008   | OP_SUBTRACT
+  0009   | OP_MULTIPLY
+  0010   | OP_SUBTRACT
+  ```
+  * without `OP_SUBTRACT`
+  ```py
+  0000 123 OP_CONSTANT 0 '4'
+  0002   | OP_CONSTANT 1 '3'
+  0004   | OP_CONSTANT 2 '2'
+  0006   | OP_NEGATE
+  0007   | OP_MULTIPLY
+  0008   | OP_NEGATE
+  0009   | OP_ADD
+  ```
+
+  Both cases increases the size of the bytecode, moreso in the case without `OP_NEGATE` which additionally increase the max stack depth. The additional overhead of supporting these instructions seem minor in comparison.
 
 # 3. Dynamically grow the VM's stack as needed instead of using a fixed sized. What are the costs and benefits of doing so?
 
