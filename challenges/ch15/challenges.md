@@ -82,3 +82,9 @@ Chapter 15 Challenges
     Time (mean ± σ):      12.3 ms ±   0.4 ms    [User: 10.0 ms, System: 2.4 ms]
     Range (min … max):    11.7 ms …  14.5 ms    186 runs
     ```
+    ```
+    Benchmark 1: ./a.out
+    Time (mean ± σ):       7.6 ms ±   0.4 ms    [User: 6.4 ms, System: 1.8 ms]
+    Range (min … max):     7.0 ms …  10.4 ms    288 runs
+    ```
+    The performance improvement measured above appears to be significant. A similar approach may be utilized, in part, for the bytecode instruction sequences of binary operators.
