@@ -1,6 +1,7 @@
 #include "vm.h"
 #include "chunk.h"
 #include "common.h"
+#include "compiler.h"
 #include "debug.h"
 #include "value.h"
 #include <stdbool.h>
@@ -79,8 +80,7 @@ InterpretResult run() {
 #undef BINARY_OP
 }
 
-InterpretResult interpret(Chunk *chunk) {
-  vm.chunk = chunk;
-  vm.ip = chunk->code;
-  return run();
+InterpretResult interpret(const char *source) {
+  compile(source);
+  return INTERPRET_OK;
 }
