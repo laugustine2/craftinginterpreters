@@ -18,7 +18,8 @@ Chapter 17 Challenges
 # 2. In Lox, what tokens, besides `TOKEN_MINUS`, can be used in both prefix and infix positions? What about in C or in another language?
 
 * `Lox`
-  * `TOKEN_BANG` can be a prefix operator as with logical negation or part of the infix operator for inequal comparison
+  * ~`TOKEN_BANG` can be a prefix operator as with logical negation or part of the infix operator for inequal comparison~
+  * `LEFT_PAREN` can be used to start a grouping or for calling a function
 * `C`
   * `+`, similar to `-`, can be both a prefix operator as well as an infix operator
   * `*` can be a pointer deference when used as a prefix operator and arithmetic multiplication when used as an infix operator
@@ -35,10 +36,9 @@ ParseRule rules[] = {
 }
 
 static void conditional() {
-  TokenType operator = parser.previous.type;
-  expression();
-  consume(TOKEN_COLON, "Expect ':' after expression.");
-  expression();
+  parsePrecedence(PREC_CONDITIONAL);
+  consume(TOKEN_COLON, "Expect ':' after then branch in ternary operator.");
+  parsePrecedence(PREC_ASSIGNMENT);
   // how to evaluate only one single branch?
   emitByte(OP_CONDITIONAL);
 }
