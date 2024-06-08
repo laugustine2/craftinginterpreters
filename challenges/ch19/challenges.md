@@ -7,4 +7,6 @@ Chapter 19 Challenges
 
 # 2. Add support "constant strings" which are `ObjSting` that do not own their character array and instead just point back to the original source string.
 
+* [Implementation](./constant-strings)
+
 # 3. What would you have Lox do when a user tries to use `+` with one string operand and the other some other type?
