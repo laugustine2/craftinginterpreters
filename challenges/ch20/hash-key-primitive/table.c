@@ -19,8 +19,22 @@ void freeTable(Table *table) {
   initTable(table);
 }
 
-static Entry *findEntry(Entry *entries, int capacity, ObjString *key) {
-  uint32_t index = key->hash % capacity;
+static uint32_t hash(Value value) {
+  if (IS_NIL(value)) {
+    return 0;
+  } else if (IS_BOOL(value)) {
+    return AS_BOOL(value) ? 1 : 0;
+  } else if (IS_NUMBER(value)) {
+    return AS_NUMBER(value);
+  } else if (IS_STRING(value)) {
+    return AS_STRING(value)->hash;
+  } else {
+    return -1; // TODO: what do?
+  }
+}
+
+static Entry *findEntry(Entry *entries, int capacity, Value *key) {
+  uint32_t index = hash(*key) % capacity;
   Entry *tombstone = NULL;
 
   for (;;) {
@@ -44,7 +58,7 @@ static Entry *findEntry(Entry *entries, int capacity, ObjString *key) {
   }
 }
 
-bool tableGet(Table *table, ObjString *key, Value *value) {
+bool tableGet(Table *table, Value *key, Value *value) {
   if (table->count == 0) {
     return false;
   }
@@ -80,7 +94,7 @@ static void adjustCapacity(Table *table, int capacity) {
   table->capacity = capacity;
 }
 
-bool tableSet(Table *table, ObjString *key, Value value) {
+bool tableSet(Table *table, Value *key, Value value) {
   if (table->count + 1 > table->capacity * TABLE_MAX_LOAD) {
     int capacity = GROW_CAPACITY(table->capacity);
     adjustCapacity(table, capacity);
@@ -95,7 +109,7 @@ bool tableSet(Table *table, ObjString *key, Value value) {
   return isNewKey;
 }
 
-bool tableDelete(Table *table, ObjString *key) {
+bool tableDelete(Table *table, Value *key) {
   if (table->count == 0) {
     return false;
   }
@@ -127,15 +141,16 @@ ObjString *tableFindString(Table *table, const char *chars, int length,
   uint32_t index = hash % table->capacity;
   for (;;) {
     Entry *entry = &table->entries[index];
-    if (entry->key == NULL) {
+    if (entry->key == NULL || !IS_STRING(*entry->key)) {
       // Stop if we find an empty non-tombstone entry.
       if (IS_NIL(entry->value)) {
         return NULL;
       }
-    } else if (entry->key->length == length && entry->key->hash == hash &&
-               memcmp(entry->key->chars, chars, length) == 0) {
+    } else if (AS_STRING(*entry->key)->length == length &&
+               AS_STRING(*entry->key)->hash == hash &&
+               memcmp(AS_STRING(*entry->key)->chars, chars, length) == 0) {
       // We found it.
-      return entry->key;
+      return AS_STRING(*entry->key);
     }
 
     index = (index + 1) % table->capacity;

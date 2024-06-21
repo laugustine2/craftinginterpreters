@@ -1,6 +1,8 @@
 #include "chunk.h"
 #include "common.h"
 #include "debug.h"
+#include "table.h"
+#include "value.h"
 #include "vm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,17 +61,13 @@ static void runFile(const char *path) {
 }
 
 int main(int argc, const char *argv[]) {
-  initVM();
-
-  if (argc == 1) {
-    repl();
-  } else if (argc == 2) {
-    runFile(argv[1]);
-  } else {
-    fprintf(stderr, "Usage: clox [path]\n");
-    exit(64);
-  }
-
-  freeVM();
+  Table table;
+  initTable(&table);
+  Value key = NUMBER_VAL(123);
+  tableSet(&table, &key, NUMBER_VAL(321));
+  Value value;
+  tableGet(&table, &key, &value);
+  printf("%f\n", AS_NUMBER(value));
+  freeTable(&table);
   return 0;
 }
