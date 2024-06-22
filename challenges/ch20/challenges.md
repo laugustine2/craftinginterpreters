@@ -9,3 +9,5 @@ Chapter 20 Challenges
 # 2. Look up a few hash table implementations, research the choices they made and why they did things that way.
 
 # 3. Write a handful of different benchmark program to validate our hash table implementation. How does the performance vary between them? Why did you choose the specific test cases you chose?
+
+* [Implementation](./hash-table-benchmark)
