@@ -9,3 +9,5 @@ Chapter 21 Challenges
 # 2. Can you come up with a more efficient way to store and access global variables without changing the semantics?
 
 # 3. Should mistakes like unused functions and accessing variables that are never defined be reported as compile errors when running from a script? What do other scripting languages you know do?
+
+* `python` reports these at runtime. I think this makes sense and it simplifies the parser.
