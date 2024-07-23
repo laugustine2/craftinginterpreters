@@ -16,4 +16,6 @@ var a = a;
 
 # 3. Pick a keyword for a single-assignment variable form and add to Lox. Justify your choice, then implement it. An atttmpt to assign to a variable declared using the new keyword should cause a compile error.
 
+* [Implementation](./single-assignment-variable)
+
 # 4. Extend clox to allow more than 256 local variable to be in scope at a time.
