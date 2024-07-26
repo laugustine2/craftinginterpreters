@@ -43,12 +43,15 @@ typedef struct {
 
 typedef struct {
   Token name;
+  bool assignable;
   int depth;
 } Local;
 
 typedef struct {
   Local locals[UINT8_COUNT];
   int localCount;
+  Token globalConstants[UINT8_COUNT];
+  int globalConstantsCount;
   int scopeDepth;
 } Compiler;
 
@@ -135,6 +138,7 @@ static void emitConstant(Value value) {
 
 static void initCompiler(Compiler *compiler) {
   compiler->localCount = 0;
+  compiler->globalConstantsCount = 0;
   compiler->scopeDepth = 0;
   current = compiler;
 }
@@ -189,19 +193,39 @@ static int resolveLocal(Compiler *compiler, Token *name) {
   return -1;
 }
 
-static void addLocal(Token name) {
+static int resolveGlobalConstant(Compiler *compiler, Token *name) {
+  for (int i = compiler->globalConstantsCount - 1; i >= 0; i--) {
+    if (identifiersEqual(name, &compiler->globalConstants[i]))
+      return i;
+  }
+  return -1;
+}
+
+static void addLocal(Token name, bool constant) {
   if (current->localCount == UINT8_COUNT) {
     error("Too many local variables in function.");
     return;
   }
   Local *local = &current->locals[current->localCount++];
   local->name = name;
+  local->assignable = !constant;
   local->depth = -1;
 }
 
-static void declareVariable() {
-  if (current->scopeDepth == 0)
+static void declareVariable(bool constant) {
+  if (current->scopeDepth == 0) {
+    if (constant) {
+      if (resolveGlobalConstant(current, &parser.previous) != -1) {
+        error("Cannot reassign constant.");
+      } else if (current->globalConstantsCount == UINT8_COUNT) {
+        error("Too many global constants.");
+      } else {
+        current->globalConstants[current->globalConstantsCount++] =
+            parser.previous;
+      }
+    }
     return;
+  }
 
   Token *name = &parser.previous;
   for (int i = current->localCount - 1; i >= 0; i--) {
@@ -215,7 +239,7 @@ static void declareVariable() {
     }
   }
 
-  addLocal(*name);
+  addLocal(*name, constant);
 }
 
 static void binary(bool canAssign) {
@@ -291,22 +315,30 @@ static void string(bool canAssign) {
 }
 
 static void namedVariable(Token name, bool canAssign) {
-  uint8_t getOp, setOp;
+  bool assignment = canAssign && match(TOKEN_EQUAL);
   int arg = resolveLocal(current, &name);
   if (arg != -1) {
-    getOp = OP_GET_LOCAL;
-    setOp = OP_SET_LOCAL;
+    if (assignment) {
+      if (!current->locals[arg].assignable) {
+        error("Cannot reassign constant");
+        return;
+      }
+      expression();
+      emitBytes(OP_SET_LOCAL, arg);
+    } else {
+      emitBytes(OP_GET_LOCAL, arg);
+    }
   } else {
-    arg = identifierConstant(&name);
-    getOp = OP_GET_GLOBAL;
-    setOp = OP_SET_GLOBAL;
-  }
-
-  if (canAssign && match(TOKEN_EQUAL)) {
-    expression();
-    emitBytes(setOp, arg);
-  } else {
-    emitBytes(getOp, arg);
+    if (assignment) {
+      if (resolveGlobalConstant(current, &name) != -1) {
+        error("Cannot reassign constant.");
+        return;
+      }
+      expression();
+      emitBytes(OP_SET_GLOBAL, identifierConstant(&name));
+    } else {
+      emitBytes(OP_GET_GLOBAL, identifierConstant(&name));
+    }
   }
 }
 
@@ -397,9 +429,9 @@ static void parsePrecendence(Precendence precendence) {
   }
 }
 
-static uint8_t parseVariable(const char *errorMessage) {
+static uint8_t parseVariable(bool constant, const char *errorMessage) {
   consume(TOKEN_IDENTIFIER, errorMessage);
-  declareVariable();
+  declareVariable(constant);
   if (current->scopeDepth > 0)
     return 0;
   return identifierConstant(&parser.previous);
@@ -429,8 +461,16 @@ static void block() {
   consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
 }
 
+static void valDeclaration() {
+  uint8_t global = parseVariable(true, "Expect variable name.");
+  consume(TOKEN_EQUAL, "Expect '=' after variable name.");
+  expression();
+  consume(TOKEN_SEMICOLON, "Expect ';' after varaible declaration.");
+  defineVariable(global);
+}
+
 static void varDeclaration() {
-  uint8_t global = parseVariable("Expect variable name.");
+  uint8_t global = parseVariable(false, "Expect variable name.");
   if (match(TOKEN_EQUAL)) {
     expression();
   } else {
@@ -475,7 +515,9 @@ static void synchronize() {
 }
 
 static void declaration() {
-  if (match(TOKEN_VAR)) {
+  if (match(TOKEN_VAL)) {
+    valDeclaration();
+  } else if (match(TOKEN_VAR)) {
     varDeclaration();
   } else {
     statement();
