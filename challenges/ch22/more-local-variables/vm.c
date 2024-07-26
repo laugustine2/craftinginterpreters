@@ -122,6 +122,13 @@ InterpretResult run() {
       push(vm.stack[slot]);
       break;
     }
+    case OP_GET_LOCAL_LONG: {
+      uint8_t lower = READ_BYTE();
+      uint8_t upper = READ_BYTE();
+      int slot = (upper << 8) | lower;
+      push(vm.stack[slot]);
+      break;
+    }
     case OP_GET_GLOBAL: {
       ObjString *name = READ_STRING();
       Value value;
@@ -140,6 +147,13 @@ InterpretResult run() {
     }
     case OP_SET_LOCAL: {
       uint8_t slot = READ_BYTE();
+      vm.stack[slot] = peek(0);
+      break;
+    }
+    case OP_SET_LOCAL_LONG: {
+      uint8_t lower = READ_BYTE();
+      uint8_t upper = READ_BYTE();
+      int slot = (upper << 8) | lower;
       vm.stack[slot] = peek(0);
       break;
     }
