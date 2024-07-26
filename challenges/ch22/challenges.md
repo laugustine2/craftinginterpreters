@@ -24,3 +24,5 @@ varDecl        → "var" IDENTIFIER ( "=" expression )? ";"
 * [Implementation](./single-assignment-variable)
 
 # 4. Extend clox to allow more than 256 local variable to be in scope at a time.
+
+* [Implementation](./more-local-variables)
