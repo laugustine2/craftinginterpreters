@@ -218,6 +218,27 @@ static void declareVariable() {
   addLocal(*name);
 }
 
+static uint8_t parseVariable(const char *errorMessage) {
+  consume(TOKEN_IDENTIFIER, errorMessage);
+  declareVariable();
+  if (current->scopeDepth > 0)
+    return 0;
+  return identifierConstant(&parser.previous);
+}
+
+static void markInitialized() {
+  current->locals[current->localCount - 1].depth = current->scopeDepth;
+}
+
+static void defineVariable(uint8_t global) {
+  if (current->scopeDepth > 0) {
+    markInitialized();
+    return;
+  }
+
+  emitBytes(OP_DEFINE_GLOBAL, global);
+}
+
 static void binary(bool canAssign) {
   TokenType operatorType = parser.previous.type;
   ParseRule *rule = getRule(operatorType);
@@ -395,27 +416,6 @@ static void parsePrecendence(Precendence precendence) {
   if (canAssign && match(TOKEN_EQUAL)) {
     error("Invalid assigment target.");
   }
-}
-
-static uint8_t parseVariable(const char *errorMessage) {
-  consume(TOKEN_IDENTIFIER, errorMessage);
-  declareVariable();
-  if (current->scopeDepth > 0)
-    return 0;
-  return identifierConstant(&parser.previous);
-}
-
-static void markInitialized() {
-  current->locals[current->localCount - 1].depth = current->scopeDepth;
-}
-
-static void defineVariable(uint8_t global) {
-  if (current->scopeDepth > 0) {
-    markInitialized();
-    return;
-  }
-
-  emitBytes(OP_DEFINE_GLOBAL, global);
 }
 
 static ParseRule *getRule(TokenType type) { return &rules[type]; }

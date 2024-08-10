@@ -1,5 +1,4 @@
 #include "vm.h"
-#include "chunk.h"
 #include "common.h"
 #include "compiler.h"
 #include "debug.h"
@@ -7,7 +6,6 @@
 #include "object.h"
 #include "value.h"
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
