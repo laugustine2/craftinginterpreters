@@ -10,6 +10,8 @@ switchCase     → "case" expression ":" statement* ;
 defaultCase    → "default" ":" statement* ;
 ```
 
+* [Implementation](./switch-statement/)
+
 # 2. Add `continue` statement to `clox`.
 
 ```
