@@ -18,4 +18,6 @@ defaultCase    → "default" ":" statement* ;
 continueStmt   → "continue" ";" ;
 ```
 
+* [Implementation](./continue-statement/)
+
 # 3. Invent a useful novel control flow feature for Lox.
