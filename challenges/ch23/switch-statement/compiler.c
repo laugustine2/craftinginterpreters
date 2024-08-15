@@ -533,7 +533,10 @@ static void switchStatement() {
     emitByte(OP_POP); // Remove switch value.
 
     // Case body.
-    statement();
+    while (!check(TOKEN_CASE) && !check(TOKEN_DEFAULT) &&
+           !check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF)) {
+      statement();
+    }
     // Exit switch.
     emitLoop(exitSwitch);
   }
@@ -547,7 +550,9 @@ static void switchStatement() {
   // Default case
   if (match(TOKEN_DEFAULT)) {
     consume(TOKEN_COLON, "Expect ':' after 'default' case.");
-    statement();
+    while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF)) {
+      statement();
+    }
   }
 
   // End switch.
