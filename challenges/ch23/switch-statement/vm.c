@@ -219,6 +219,10 @@ InterpretResult run() {
       // Exit interpreter.
       return INTERPRET_OK;
     }
+    case OP_DUP: {
+      push(peek(0));
+      break;
+    }
     }
   }
 #undef READ_BYTE

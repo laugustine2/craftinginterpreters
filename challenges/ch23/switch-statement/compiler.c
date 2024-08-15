@@ -495,6 +495,66 @@ static void expressionStatement() {
   emitByte(OP_POP);
 }
 
+static void switchStatement() {
+  // Switch value.
+  consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
+  expression();
+  consume(TOKEN_RIGHT_PAREN, "Expect ')' after switch value.");
+
+  emitByte(OP_DUP);                 // Duplicate switch value.
+  int nextCase = emitJump(OP_JUMP); // Jump to first case or default or end.
+
+  // Used to exit the switch statement.
+  int exitSwitch = currentChunk()->count;
+  int afterSwitch = emitJump(OP_JUMP);
+
+  // Switch cases.
+  consume(TOKEN_LEFT_BRACE, "Expect '{'.");
+  while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_DEFAULT) &&
+         !check(TOKEN_EOF)) {
+    patchJump(nextCase);
+
+    // Remove duplicated switch value or previous case comparison.
+    emitByte(OP_POP);
+    // Preserve the switch value for subsequent cases
+    emitByte(OP_DUP);
+
+    // Evaluate case value.
+    consume(TOKEN_CASE, "Expect 'case' statement.");
+    expression();
+    consume(TOKEN_COLON, "Expect ':' after case value.");
+
+    // Compare case value with switch value.
+    emitByte(OP_EQUAL);
+    // Jump to next case/default/end if not equal
+    nextCase = emitJump(OP_JUMP_IF_FALSE);
+
+    emitByte(OP_POP); // Remove result of comparision.
+    emitByte(OP_POP); // Remove switch value.
+
+    // Case body.
+    statement();
+    // Exit switch.
+    emitLoop(exitSwitch);
+  }
+
+  patchJump(nextCase);
+  // Remove duplicated switch value or previous case comparison.
+  emitByte(OP_POP);
+  // Remove switch value.
+  emitByte(OP_POP);
+
+  // Default case
+  if (match(TOKEN_DEFAULT)) {
+    consume(TOKEN_COLON, "Expect ':' after 'default' case.");
+    statement();
+  }
+
+  // End switch.
+  consume(TOKEN_RIGHT_BRACE, "Expect '}' after switch cases.");
+  patchJump(afterSwitch);
+}
+
 static void forStatement() {
   beginScope();
   consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
@@ -615,6 +675,8 @@ static void declaration() {
 static void statement() {
   if (match(TOKEN_PRINT)) {
     printStatement();
+  } else if (match(TOKEN_SWITCH)) {
+    switchStatement();
   } else if (match(TOKEN_FOR)) {
     forStatement();
   } else if (match(TOKEN_IF)) {
