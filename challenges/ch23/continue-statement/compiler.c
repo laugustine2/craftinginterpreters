@@ -47,9 +47,16 @@ typedef struct {
 } Local;
 
 typedef struct {
+  int loopStart;
+  int scopeDepth;
+} LoopInfo;
+
+typedef struct {
   Local locals[UINT8_COUNT];
   int localCount;
   int scopeDepth;
+  LoopInfo loops[UINT8_COUNT];
+  int loopDepth;
 } Compiler;
 
 Parser parser;
@@ -165,6 +172,7 @@ static void patchJump(int offset) {
 static void initCompiler(Compiler *compiler) {
   compiler->localCount = 0;
   compiler->scopeDepth = 0;
+  compiler->loopDepth = 0;
   current = compiler;
 }
 
@@ -495,6 +503,17 @@ static void expressionStatement() {
   emitByte(OP_POP);
 }
 
+static void beginLoop(int loopStart) {
+  current->loopDepth++;
+  LoopInfo *loopInfo = &current->loops[current->loopDepth - 1];
+  loopInfo->loopStart = loopStart;
+  loopInfo->scopeDepth = current->scopeDepth;
+}
+
+static void endLoop() {
+  current->loopDepth--;
+}
+
 static void forStatement() {
   beginScope();
   consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
@@ -529,7 +548,9 @@ static void forStatement() {
     patchJump(bodyJump);
   }
 
+  beginLoop(loopStart);
   statement();
+  endLoop();
   emitLoop(loopStart);
 
   if (exitJump != -1) {
@@ -573,11 +594,27 @@ static void whileStatement() {
 
   int exitJump = emitJump(OP_JUMP_IF_FALSE);
   emitByte(OP_POP);
+  beginLoop(loopStart);
   statement();
+  endLoop();
   emitLoop(loopStart);
 
   patchJump(exitJump);
   emitByte(OP_POP);
+}
+
+static void continueStatement() {
+  if (current->loopDepth < 1) {
+    error("Cannot use 'continue' outside of a loop.");
+  }
+  consume(TOKEN_SEMICOLON, "Expect ';' after 'continue'.");
+
+  LoopInfo *loopInfo = &current->loops[current->loopDepth - 1];
+  while (loopInfo->scopeDepth > current->scopeDepth) {
+    endScope();
+    loopInfo->scopeDepth--;
+  }
+  emitLoop(loopInfo->loopStart);
 }
 
 static void synchronize() {
@@ -621,6 +658,8 @@ static void statement() {
     ifStatement();
   } else if (match(TOKEN_WHILE)) {
     whileStatement();
+  } else if (match(TOKEN_CONTINUE)) {
+    continueStatement();
   } else if (match(TOKEN_LEFT_BRACE)) {
     beginScope();
     block();
