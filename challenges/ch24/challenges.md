@@ -4,6 +4,17 @@ Chapter 24 Challenges
 # 1. Store the `ip` field directly in a local variable and mark it `register` to encourage the compiler to keep it in a native CPU register. Write a coule of benchmarks to measure how it affects performance. Is the extra code complexity worth it?
 
 * [Implementation](./ip-register-variable/)
+* Benchmark ran using `hyperfine` (`hyperfine './a.out test.clox' --warmup=10`).
+```
+(before)
+  Time (mean ± σ):      3.512 s ±  0.111 s    [User: 3.507 s, System: 0.001 s]
+  Range (min … max):    3.304 s …  3.609 s    10 runs
+
+(after)
+  Time (mean ± σ):      3.244 s ±  0.152 s    [User: 3.241 s, System: 0.000 s]
+  Range (min … max):    3.013 s …  3.475 s    10 runs
+```
+* Results showed a ~7.5% increase in performance. I'd say this is significant for the small code change
 
 # 2. Add arity checking to native function calls.
 
