@@ -22,4 +22,6 @@ Chapter 24 Challenges
 
 # 3. Extend the native function system to support reporting runtime errors. How does this capability affect the performance of native calls?
 
+* [Implementation](./native-function-runtime-error/)
+
 # 4. Add some more native functions to do things you find useful and write some programs using those. How do the affect the feel of the language and how practical it is?
