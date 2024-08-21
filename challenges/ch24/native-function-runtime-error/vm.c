@@ -5,6 +5,7 @@
 #include "memory.h"
 #include "object.h"
 #include "value.h"
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,8 +13,15 @@
 
 VM vm;
 
-static Value clockNative(int argCount, Value *args) {
-  return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+static ReturnValue sqrtNative(int argCount, Value *args) {
+  if (argCount != 1 || !IS_NUMBER(args[0])) {
+    return (ReturnValue){.errorMessage = "invalid args"};
+  }
+  return (ReturnValue){.result = NUMBER_VAL(sqrt(AS_NUMBER(*args)))};
+}
+
+static ReturnValue clockNative(int argCount, Value *args) {
+  return (ReturnValue){NUMBER_VAL((double)clock() / CLOCKS_PER_SEC)};
 }
 
 static void resetStack() {
@@ -59,6 +67,7 @@ void initVM() {
   initTable(&vm.strings);
 
   defineNative("clock", clockNative);
+  defineNative("sqrt", sqrtNative);
 }
 
 void freeVM() {
@@ -105,9 +114,13 @@ static bool callValue(Value callee, int argCount) {
       return call(AS_FUNCTION(callee), argCount);
     case OBJ_NATIVE: {
       NativeFn native = AS_NATIVE(callee);
-      Value result = native(argCount, vm.stackTop - argCount);
+      ReturnValue result = native(argCount, vm.stackTop - argCount);
+      if (result.errorMessage != NULL) {
+        runtimeError(result.errorMessage);
+        return false;
+      }
       vm.stackTop -= argCount + 1;
-      push(result);
+      push(result.result);
       return true;
     }
     default:

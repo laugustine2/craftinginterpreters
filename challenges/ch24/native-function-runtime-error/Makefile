@@ -1,6 +1,6 @@
 # Compile
 build:
-	gcc *.c
+	gcc *.c -lm
 # Run
 run: a.out
 	./a.out
