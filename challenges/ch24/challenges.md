@@ -28,3 +28,8 @@ Chapter 24 Challenges
 # 4. Add some more native functions to do things you find useful and write some programs using those. How do the affect the feel of the language and how practical it is?
 
 * [Implementation](./additional-native-functions/)
+* Functions added
+  * `readNumber` - reads a number input
+  * `readString` - read a string input
+  * `random` - generates a randomd number
+* Create a number guessing game using `readNumber` and `random`

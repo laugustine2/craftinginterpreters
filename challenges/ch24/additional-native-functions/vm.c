@@ -7,6 +7,7 @@
 #include "value.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -14,6 +15,22 @@ VM vm;
 
 static Value clockNative(int argCount, Value *args) {
   return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+}
+
+static Value readNumberNative(int argCount, Value *args) {
+  double n;
+  scanf("%lf", &n);
+  return NUMBER_VAL(n);
+}
+
+static Value readStringNative(int argCount, Value *args) {
+  char line[1024];
+  scanf("%s", line);
+  return OBJ_VAL(copyString(line, strlen(line)));
+}
+
+static Value randomNative(int argCount, Value *args) {
+  return NUMBER_VAL(rand());
 }
 
 static void resetStack() {
@@ -58,7 +75,12 @@ void initVM() {
   initTable(&vm.globals);
   initTable(&vm.strings);
 
+  srand(time(NULL));
+
   defineNative("clock", clockNative);
+  defineNative("readNumber", readNumberNative);
+  defineNative("readString", readStringNative);
+  defineNative("random", randomNative);
 }
 
 void freeVM() {

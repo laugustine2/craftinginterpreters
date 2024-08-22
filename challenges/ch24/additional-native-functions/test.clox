@@ -1,8 +1,18 @@
-fun fib(n) {
-  if (n < 2) return n;
-  return fib(n - 2) + fib(n - 1);
+fun guesses(value) {
+  for (var attempts = 1; ;attempts = attempts + 1) {
+    var guess = readNumber();
+    if (guess > value) {
+        print "lower";
+    } else if (guess < value) {
+        print "higher";
+    } else {
+        print "";
+        print "got it! attempts:";
+        print attempts;
+        return;
+    }
+  }
 }
 
-var start = clock();
-print fib(35);
-print clock() - start;
+print "guess the generated number";
+guesses(random());
