@@ -26,3 +26,5 @@ Chapter 24 Challenges
 * `NativeFn` was updated to return a struct with the result value and error message (should really be a union). The `callValue` function was updated to report a runtime error if the result included an error message. Running a benchmark using the same means as described in `#1` showed ~1% performance penalty which seems insignificant.
 
 # 4. Add some more native functions to do things you find useful and write some programs using those. How do the affect the feel of the language and how practical it is?
+
+* [Implementation](./additional-native-functions/)
