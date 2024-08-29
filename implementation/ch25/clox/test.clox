@@ -1,8 +1,20 @@
-fun fib(n) {
-  if (n < 2) return n;
-  return fib(n - 2) + fib(n - 1);
+var x = "global";
+fun outer() {
+  var x = "outer";
+  fun inner() {
+    print x;
+  }
+  inner();
 }
+outer();
 
-var start = clock();
-print fib(35);
-print clock() - start;
+fun makeClosure(value) {
+  fun closure() {
+    print value;
+  }
+  return closure;
+}
+var doughnut = makeClosure("doughnut");
+var bagel = makeClosure("bagel");
+doughnut();
+bagel();
