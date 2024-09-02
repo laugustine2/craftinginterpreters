@@ -34,3 +34,23 @@ Benchmark 1: ./a.out closure.clox
 
 # 3. Using closures, write a `Lox` program that model two-dimensional vector "objects". It should (1) define a "constructor" to create a new vector with the given x and y coordinates, (2) provide "methods" to access the x and y coordinates of values returned from that constructor, (3) define and addition "method" that adds two vectors and produces a third.
 
+```
+fun create(x,y) {
+  fun getX() { return x; }
+  fun getY() { return y; }
+  fun add(other) {
+    x = x + other("getX")();
+    y = y + other("getY")();
+    return create(x, y);
+  }
+  fun vector(command) {
+    if (command == "getX") return getX;
+    if (command == "getY") return getY;
+    if (command == "add") return add;
+  }
+  return vector;
+}
+
+var vec = create(1,2);
+print vec("add")(vec)("getX")();
+```
