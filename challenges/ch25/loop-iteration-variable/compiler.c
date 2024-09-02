@@ -641,10 +641,12 @@ static void expressionStatement() {
 static void forStatement() {
   beginScope();
   consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
+  bool hasVar = false;
   if (match(TOKEN_SEMICOLON)) {
     // No initializer.
   } else if (match(TOKEN_VAR)) {
     varDeclaration();
+    hasVar = true;
   } else {
     expressionStatement();
   }
@@ -672,7 +674,24 @@ static void forStatement() {
     patchJump(bodyJump);
   }
 
-  statement();
+  if (!hasVar) {
+    statement();
+  } else {
+    // start scope
+    beginScope();
+    // create shadow variable using loop variable
+    emitBytes(OP_GET_LOCAL, current->localCount - 1);
+    addLocal(current->locals[current->localCount - 1].name);
+    markInitialized();
+    // loop body
+    statement();
+    // copy shadow variable back to loop variable
+    emitBytes(OP_GET_LOCAL, current->localCount - 1);
+    emitBytes(OP_SET_LOCAL, current->localCount - 2);
+    emitByte(OP_POP);
+    // end scope
+    endScope();
+  }
   emitLoop(loopStart);
 
   if (exitJump != -1) {

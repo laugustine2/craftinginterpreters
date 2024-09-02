@@ -1,20 +1,19 @@
-var x = "global";
-fun outer() {
-  var x = "outer";
-  fun inner() {
-    print x;
-  }
-  inner();
-}
-outer();
+var globalOne;
+var globalTwo;
 
-fun makeClosure(value) {
-  fun closure() {
-    print value;
+fun main() {
+  for (var a = 1; a <= 2; a = a + 1) {
+    fun closure() {
+      print a;
+    }
+    if (globalOne == nil) {
+      globalOne = closure;
+    } else {
+      globalTwo = closure;
+    }
   }
-  return closure;
 }
-var doughnut = makeClosure("doughnut");
-var bagel = makeClosure("bagel");
-doughnut();
-bagel();
+
+main();
+globalOne();
+globalTwo();
