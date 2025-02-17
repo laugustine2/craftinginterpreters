@@ -1,20 +1,6 @@
-var x = "global";
-fun outer() {
-  var x = "outer";
-  fun inner() {
-    print x;
-  }
-  inner();
-}
-outer();
+class Pair {}
 
-fun makeClosure(value) {
-  fun closure() {
-    print value;
-  }
-  return closure;
-}
-var doughnut = makeClosure("doughnut");
-var bagel = makeClosure("bagel");
-doughnut();
-bagel();
+var pair = Pair();
+pair.first = 1;
+pair.second = 2;
+print pair.first + pair.second; // 3.
