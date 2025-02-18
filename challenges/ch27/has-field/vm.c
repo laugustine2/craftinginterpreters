@@ -44,6 +44,27 @@ static void runtimeError(const char *format, ...) {
   resetStack();
 }
 
+static Value hasFieldNative(int argCount, Value *args) {
+  if (argCount != 2) {
+    runtimeError("Expected 2 arguments but got %d.", argCount);
+  }
+  if (!IS_INSTANCE(args[0])) {
+    runtimeError("Expected instance as 1st argument");
+  }
+  if (!IS_STRING(args[1])) {
+    runtimeError("Expected string as 2nd argument");
+  }
+
+  ObjInstance *instance = AS_INSTANCE(args[0]);
+  ObjString *name = AS_STRING(args[1]);
+  Value result;
+  if (tableGet(&instance->fields, name, &result)) {
+    return BOOL_VAL(true);
+  } else {
+    return BOOL_VAL(false);
+  }
+}
+
 static void defineNative(const char *name, NativeFn function) {
   push(OBJ_VAL(copyString(name, (int)strlen(name))));
   push(OBJ_VAL(newNative(function)));
@@ -66,6 +87,7 @@ void initVM() {
   initTable(&vm.strings);
 
   defineNative("clock", clockNative);
+  defineNative("hasField", hasFieldNative);
 }
 
 void freeVM() {
