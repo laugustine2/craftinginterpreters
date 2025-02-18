@@ -12,8 +12,51 @@
 
 VM vm;
 
-static Value clockNative(int argCount, Value *args) {
-  return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+static ReturnValue clockNative(int argCount, Value *args) {
+  return (ReturnValue){NUMBER_VAL((double)clock() / CLOCKS_PER_SEC)};
+}
+
+static ReturnValue getFieldNative(int argCount, Value *args) {
+  if (argCount != 2) {
+    return (ReturnValue){.errorMessage = "'getField' expects 2 arguments"};
+  }
+  if (!IS_INSTANCE(args[0])) {
+    return (ReturnValue){.errorMessage =
+                             "'getField' expects instance as 1st argument"};
+  }
+  if (!IS_STRING(args[1])) {
+    return (ReturnValue){.errorMessage =
+                             "'getField' expects string as 2nd argument"};
+  }
+
+  ObjInstance *instance = AS_INSTANCE(args[0]);
+  ObjString *name = AS_STRING(args[1]);
+  Value result;
+  if (!tableGet(&instance->fields, name, &result)) {
+    return (ReturnValue){.errorMessage = "Undefined property"};
+  }
+
+  return (ReturnValue){result};
+}
+
+static ReturnValue setFieldNative(int argCount, Value *args) {
+  if (argCount != 3) {
+    return (ReturnValue){.errorMessage = "'setField' expects 3 arguments"};
+  }
+  if (!IS_INSTANCE(args[0])) {
+    return (ReturnValue){.errorMessage =
+                             "'setField' expects instance as 1st argument"};
+  }
+  if (!IS_STRING(args[1])) {
+    return (ReturnValue){.errorMessage =
+                             "'setField' expects string as 2nd argument"};
+  }
+
+  ObjInstance *instance = AS_INSTANCE(args[0]);
+  ObjString *name = AS_STRING(args[1]);
+  tableSet(&instance->fields, name, args[2]);
+
+  return (ReturnValue){args[2]};
 }
 
 static void resetStack() {
@@ -66,6 +109,8 @@ void initVM() {
   initTable(&vm.strings);
 
   defineNative("clock", clockNative);
+  defineNative("getField", getFieldNative);
+  defineNative("setField", setFieldNative);
 }
 
 void freeVM() {
@@ -117,9 +162,13 @@ static bool callValue(Value callee, int argCount) {
       return call(AS_CLOSURE(callee), argCount);
     case OBJ_NATIVE: {
       NativeFn native = AS_NATIVE(callee);
-      Value result = native(argCount, vm.stackTop - argCount);
+      ReturnValue result = native(argCount, vm.stackTop - argCount);
+      if (result.errorMessage != NULL) {
+        runtimeError(result.errorMessage);
+        return false;
+      }
       vm.stackTop -= argCount + 1;
-      push(result);
+      push(result.value);
       return true;
     }
     default:

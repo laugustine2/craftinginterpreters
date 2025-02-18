@@ -47,7 +47,12 @@ typedef struct {
   ObjString *name;
 } ObjFunction;
 
-typedef Value (*NativeFn)(int argCount, Value *args);
+typedef struct {
+  Value value;
+  const char *errorMessage;
+} ReturnValue;
+
+typedef ReturnValue (*NativeFn)(int argCount, Value *args);
 
 typedef struct {
   Obj obj;

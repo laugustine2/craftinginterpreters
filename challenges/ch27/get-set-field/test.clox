@@ -1,6 +1,8 @@
 class Pair {}
 
 var pair = Pair();
-pair.first = 1;
-pair.second = 2;
-print pair.first + pair.second; // 3.
+var first = "first";
+var second = "second";
+setField(pair, first, 1);
+setField(pair, second, 2);
+print getField(pair, first) + getField(pair, second); // 3.

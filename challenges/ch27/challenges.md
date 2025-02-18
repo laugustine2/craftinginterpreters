@@ -10,6 +10,10 @@ Adding exception handling to `Lox` would be some effort. However, we can provide
 
 # 2. Should a user program be able use a string value as a field name? Devise and implement a language feature that enables this.
 
+Yes, user programs should be able to get/set fields using a string value
+
+* [Implementation](./get-set-field/)
+
 # 3. How do other languages handle removing a field from an instance? Choose and implement a strategy for Lox
 
 # 4. How do sophisticated dynamic language implementations optimize field access?
