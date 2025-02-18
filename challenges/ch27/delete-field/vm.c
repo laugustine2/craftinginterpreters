@@ -11,9 +11,35 @@
 #include <time.h>
 
 VM vm;
+static void runtimeError(const char *format, ...);
+bool nativeError = false;
 
 static Value clockNative(int argCount, Value *args) {
   return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+}
+
+static Value deleteFieldNative(int argCount, Value *args) {
+  if (argCount != 2) {
+    nativeError = true;
+    runtimeError("Expected 2 arguments got %d", argCount);
+    return NIL_VAL;
+  }
+  if (!IS_INSTANCE(args[0])) {
+    nativeError = true;
+    runtimeError("'deleteField' expects 1st argument to be an instance");
+    return NIL_VAL;
+  }
+  if (!IS_STRING(args[1])) {
+    nativeError = true;
+    runtimeError("'deleteField' expects 2nd argument to be a string");
+    return NIL_VAL;
+  }
+
+  ObjInstance *instance = AS_INSTANCE(args[0]);
+  ObjString *name = AS_STRING(args[1]);
+  tableDelete(&instance->fields, name);
+
+  return NIL_VAL;
 }
 
 static void resetStack() {
@@ -66,6 +92,7 @@ void initVM() {
   initTable(&vm.strings);
 
   defineNative("clock", clockNative);
+  defineNative("deleteField", deleteFieldNative);
 }
 
 void freeVM() {
