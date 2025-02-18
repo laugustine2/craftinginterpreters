@@ -11,6 +11,7 @@
 #include <time.h>
 
 VM vm;
+bool nativeError = false;
 
 static Value clockNative(int argCount, Value *args) {
   return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
@@ -47,12 +48,18 @@ static void runtimeError(const char *format, ...) {
 static Value hasFieldNative(int argCount, Value *args) {
   if (argCount != 2) {
     runtimeError("Expected 2 arguments but got %d.", argCount);
+    nativeError = true;
+    return NIL_VAL;
   }
   if (!IS_INSTANCE(args[0])) {
     runtimeError("Expected instance as 1st argument");
+    nativeError = true;
+    return NIL_VAL;
   }
   if (!IS_STRING(args[1])) {
     runtimeError("Expected string as 2nd argument");
+    nativeError = true;
+    return NIL_VAL;
   }
 
   ObjInstance *instance = AS_INSTANCE(args[0]);
@@ -140,6 +147,9 @@ static bool callValue(Value callee, int argCount) {
     case OBJ_NATIVE: {
       NativeFn native = AS_NATIVE(callee);
       Value result = native(argCount, vm.stackTop - argCount);
+      if (nativeError) {
+        return false;
+      }
       vm.stackTop -= argCount + 1;
       push(result);
       return true;

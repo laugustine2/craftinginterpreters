@@ -6,3 +6,4 @@ pair.second = 2;
 print hasField(pair, "first"); // true
 print hasField(pair, "second"); // true
 print hasField(pair, "third"); // false
+print hasField(pair, true); // error!
