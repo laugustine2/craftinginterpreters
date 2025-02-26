@@ -17,4 +17,9 @@ Chapter 28 Challenges
 
 # 2. Most of the time a callsite ends up calling the exact same method on exact same class. How do advanced language implementation optimize based on this observation?
 
+Caching?
+
 # 3. When interpreting an `OP_INVOKE` instruction, the VM first lookup fields that could shadow method before it looks for a method. This is because fields and methods are accessed using the same syntax and fields shadow methods. Was this the right choice?
+
+I think it's the right choice since it follows the precedent of many other languages.  
+The optimization at the end of this chapter showed a significant performance gains. I'd have to measure the improvement to determine if a different syntax would be worth it.
