@@ -675,12 +675,12 @@ static void classDeclaration() {
   uint8_t nameConstant = identifierConstant(&parser.previous);
   declareVariable();
 
+  emitBytes(OP_CLASS, nameConstant);
+  defineVariable(nameConstant);
+
   ClassCompiler classCompiler;
   classCompiler.enclosing = currentClass;
   currentClass = &classCompiler;
-
-  emitBytes(OP_CLASS, nameConstant);
-  defineVariable(nameConstant);
 
   namedVariable(className, false);
   consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
